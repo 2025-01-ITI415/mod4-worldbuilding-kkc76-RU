@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace UnityStandardAssets.Characters.FirstPerson
@@ -41,6 +42,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+        public Text countText;
+        public Text winText;
+        public int count;
 
         // Use this for initialization
         private void Start()
@@ -55,6 +59,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+
+        }
+        // At the start of the game..
+        void StartCount()
+        {
+            
+
+            // Set the count to zero 
+            count = 0;
+
+            // Run the SetCountText function to update the UI (see below)
+            SetCountText();
+
+            // Set the text property of our Win Text UI to an empty string, making the 'You Win' (game over message) blank
+            winText.text = "";
         }
 
 
@@ -254,6 +273,33 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+        }
+        void OnTriggerEnter(Collider other)
+        {
+            // ..and if the game object we intersect has the tag 'Pick Up' assigned to it..
+            if (other.gameObject.CompareTag("Pick Up"))
+            {
+                // Make the other game object (the pick up) inactive, to make it disappear
+                other.gameObject.SetActive(false);
+
+                // Add one to the score variable 'count'
+                count = count + 1;
+
+                // Run the 'SetCountText()' function (see below)
+                SetCountText();
+            }
+        }
+        void SetCountText()
+        {
+            // Update the text field of our 'countText' variable
+            countText.text = "Count: " + count.ToString();
+
+            // Check if our 'count' is equal to or exceeded 12
+            if (count >= 12)
+            {
+                // Set the text value of our 'winText'
+                winText.text = "You Got them all";
+            }
         }
     }
 }
