@@ -28,6 +28,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip[] m_FootstepSounds;    // an array of footstep sounds that will be randomly selected from.
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
+        [SerializeField] private AudioClip m_Coin;
 
         private Camera m_Camera;
         private bool m_Jump;
@@ -258,6 +259,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_MouseLook.LookRotation (transform, m_Camera.transform);
         }
 
+        private void PlayCoinSound()
+        {
+            m_AudioSource.clip = m_Coin;
+            m_AudioSource.Play();
+        }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
@@ -279,8 +285,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // ..and if the game object we intersect has the tag 'Pick Up' assigned to it..
             if (other.gameObject.CompareTag("Pick Up"))
             {
+                PlayCoinSound();
                 // Make the other game object (the pick up) inactive, to make it disappear
                 other.gameObject.SetActive(false);
+
+                
 
                 // Add one to the score variable 'count'
                 count = count + 1;
@@ -292,10 +301,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         void SetCountText()
         {
             // Update the text field of our 'countText' variable
-            countText.text = "Count: " + count.ToString();
+            countText.text = "Total Cores: " + count.ToString() + "/6";
 
             // Check if our 'count' is equal to or exceeded 12
-            if (count >= 12)
+            if (count >= 6)
             {
                 // Set the text value of our 'winText'
                 winText.text = "You Got them all";
